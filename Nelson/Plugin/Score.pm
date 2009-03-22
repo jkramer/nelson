@@ -24,6 +24,7 @@ sub message {
 
 		if($score) {
 			$score->score($score->score + $modification);
+			$score->update;
 		}
 		else {
 			$score = $self->scores->create(
