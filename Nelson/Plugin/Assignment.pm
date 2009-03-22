@@ -42,6 +42,8 @@ sub message {
 	elsif($text =~ /^(\d+)?!!(.+?)\s*$/) {
 		my ($revision, $key) = ($1, $2);
 
+		$revision = undef unless length($revision);
+
 		$message->reply($self->read($key, $revision));
 	}
 
@@ -58,7 +60,7 @@ sub message {
 
 	elsif($text =~ /^!nelson\s*$/) {
 		my $nelsons = $self->assignments->search(
-			{ key => { -like => '%nelson%' } },
+			{ key => { -ilike => '%nelson%' } },
 		);
 
 		my $rand = int(rand($nelsons->count)) + 1;
@@ -119,8 +121,8 @@ sub find {
 	my $result = $self->assignments->search(
 		{
 			-or => [
-			key => { like => '%' . $needle . '%' },
-			value => { like => '%' . $needle . '%' },
+			key => { -ilike => '%' . $needle . '%' },
+			value => { -ilike => '%' . $needle . '%' },
 			],
 		},
 		{
@@ -145,10 +147,10 @@ sub read {
 	my $assignment = $self->resolve($key, $revision);
 
 	if(!$assignment) {
-		my $result = $self->assignments->search_like( { key => $key . '%' } );
+		my $result = $self->assignments->search( { key => { -ilike => $key . '%' } } );
 
 		if($result->count != 1) {
-			$result = $self->assignments->search_like( { key => '%' . $key . '%' } );
+			$result = $self->assignments->search( { key => { -ilike => '%' . $key . '%' } } );
 		}
 
 		if($result->count > 1) {
@@ -178,14 +180,14 @@ sub resolve {
 
 	my $result;
 
-	if(defined $revision) {
+	if(defined($revision) and length($revision)) {
 		$result = $self->assignments->search(
-			{ key => $key, revision => $revision, },
+			{ key => { -ilike => $key }, revision => $revision, },
 		);
 	}
 	else {
 		$result = $self->assignments->search(
-			{ key => $key, },
+			{ key => { -ilike => $key }, },
 			{ order_by => \'revision DESC', }
 		);
 	}
@@ -206,7 +208,7 @@ sub _format {
 
 	my $key      = $assignment->key;
 	my $value    = $assignment->value;
-	my $time     = $assignment->when;
+	my $time     = $assignment->when->strftime('on %F at %T');
 	my $revision = $assignment->revision;
 	my $user     = $assignment->user;
 
