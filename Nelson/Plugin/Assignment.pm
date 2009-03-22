@@ -42,7 +42,7 @@ sub message {
 	elsif($text =~ /^(\d+)?!!(.+?)\s*$/) {
 		my ($revision, $key) = ($1, $2);
 
-		$revision = undef unless length($revision);
+		$revision = undef if(defined($revision) and !length($revision));
 
 		$message->reply($self->read($key, $revision));
 	}
@@ -154,8 +154,8 @@ sub read {
 		}
 
 		if($result->count > 1) {
-			my $uniq = { map { $_->key => $_ } $result->get_column('key') };
-			my $list = join ', ', map { "'$_'" } values %{$uniq};
+			my $uniq = { map { $_->key => $_ } $result->all('key') };
+			my $list = join ', ', map { "'$_'" } keys %{$uniq};
 
 			return 'Did you mean on of ' . $list . '?';
 		}
