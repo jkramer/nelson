@@ -16,7 +16,7 @@ sub priority { 0 }
 sub message {
 	my ($self, $message) = @_;
 	
-	return $message->text =~ /^!/;
+	return $message->text =~ /^(?:\d*)!/;
 }
 
 
