@@ -1,0 +1,50 @@
+#!/usr/bin/perl
+
+use strict;
+use warnings;
+
+use Config::Simple;
+use Getopt::LL::Simple qw( -f=s -h=s -p=d -s -n=s -c=s -P=s -S );
+
+use Nelson;
+
+# Find readable configuration file.
+my ($cfg_path) = grep {
+	defined($_) and -r $_
+} $ARGV{'-f'}, 'nelson.ini', $ENV{HOME} . '/.nelson.ini', '/etc/nelson.ini';
+
+die "No readble configuration found.\n" unless $cfg_path;
+
+my $cfg = new Config::Simple($cfg_path);
+
+# Override configuration with command line options.
+$cfg->param('irc.host'     => $ARGV{'-h'}) if($ARGV{'-h'});
+$cfg->param('irc.port'     => $ARGV{'-p'}) if($ARGV{'-p'});
+$cfg->param('irc.nick'     => $ARGV{'-n'}) if($ARGV{'-n'});
+$cfg->param('irc.channel'  => $ARGV{'-c'}) if($ARGV{'-c'});
+$cfg->param('irc.password' => $ARGV{'-P'}) if($ARGV{'-P'});
+
+# Set defaults unless overridden.
+$cfg->param('irc.port' => 6667    ) unless $cfg->param('irc.port' ) ;
+$cfg->param('irc.nick' => 'nelson') unless $cfg->param('irc.nick' ) ;
+
+# Save settings to .ini if wanted.
+$cfg->save if($ARGV{'-S'});
+
+# Basic configuration checks.
+# Required settings.
+my %req = (
+	( map { $_ => 'irc.' . $_ } qw( host nick channel ) ),
+	database => 'database.source',
+);
+
+while(my ($k, $v) = each %req) {
+	die "No $k.\n" unless $cfg->param($v);
+}
+
+
+my $nelson = new Nelson;
+
+# Run it.
+$nelson->setup($cfg->vars);
+$nelson->run;
