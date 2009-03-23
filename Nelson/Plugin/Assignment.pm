@@ -93,7 +93,7 @@ sub assign {
 				}
 			);
 
-			return "Thanks for your contribution to the ultimate source of all knowledge.";
+			return "Thanks for your contribution to the ultimate source of distraction.";
 		}
 
 		else {
@@ -110,7 +110,7 @@ sub assign {
 			}
 		);
 
-		return "Thanks for your contribution to the ultimate source of all knowledge.";
+		return "Thanks for your contribution to the ultimate source of distraction.";
 	}
 }
 
@@ -137,7 +137,12 @@ sub find {
 		push @result, $assignment->key . '[' . $assignment->revision . ']';
 	}
 
-	return join(', ', @result) . '.';
+	if(@result) {
+		return join(', ', @result) . '.';
+	}
+	else {
+		return 'No match.';
+	}
 }
 
 
@@ -154,10 +159,10 @@ sub read {
 		}
 
 		if($result->count > 1) {
-			my $uniq = { map { $_->key => $_ } $result->all('key') };
+			my $uniq = { map { $_->key => $_ } $result->slice(0, 14) };
 			my $list = join ', ', map { "'$_'" } keys %{$uniq};
 
-			return 'Did you mean on of ' . $list . '?';
+			return 'Did you mean one of ' . $list . '?';
 		}
 		elsif($result->count == 0) {
 			return 'No match.';
