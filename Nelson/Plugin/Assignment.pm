@@ -160,9 +160,14 @@ sub read {
 
 		if($result->count > 1) {
 			my $uniq = { map { $_->key => $_ } $result->slice(0, 14) };
-			my $list = join ', ', map { "'$_'" } keys %{$uniq};
 
-			return 'Did you mean one of ' . $list . '?';
+			if(keys(%{$uniq}) > 1) {
+				my $list = join ', ', map { "'$_'" } keys %{$uniq};
+				return 'Did you mean one of ' . $list . '?';
+			}
+			else {
+				return $self->_format($self->resolve(keys(%{$uniq}), $revision));
+			}
 		}
 		elsif($result->count == 0) {
 			return 'No match.';
