@@ -129,8 +129,6 @@ sub loop {
 
 		chomp $message;
 
-		warn "$message\n";
-
 		$command = uc $command;
 
 		if($command !~ /\D/ and $command >= 400 and $command < 600) {

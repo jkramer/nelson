@@ -17,13 +17,14 @@ our %MEMBERS = (
 	password => '$',
 	irc      => 'Nelson::IRC',
 	ssl      => '$',
+	bind     => '$',
 );
 
 
 sub setup {
 	my ($self, %cfg) = @_;
 
-	for(qw( channel host port nick password )) {
+	for(qw( channel host port nick password bind )) {
 		$self->$_($cfg{'irc.' . $_});
 	}
 
@@ -58,7 +59,7 @@ sub callback {
 sub connect {
 	my ($self) = @_;
 
-	$self->irc->connect;
+	$self->irc->connect(undef, undef, $self->bind || undef);
 	$self->irc->loop;
 }
 
@@ -72,8 +73,6 @@ sub join {
 
 sub message {
 	my ($self, $channel, $text) = @_;
-
-	warn "MESSAGE: $channel :: $text\n";
 
 	$self->irc->message($channel, $text);
 }
