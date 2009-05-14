@@ -1,4 +1,3 @@
-
 package Nelson::Plugin::Assignment;
 
 use strict;
@@ -67,6 +66,24 @@ sub message {
 		my ($nelson) = $nelsons->slice($rand, $rand + 1);
 
 		$message->send($nelson->value);
+	}
+
+	elsif($text =~ /^!twitson\s+(.+?)\s*$/) {
+		my $sendto = $1;
+
+		my $nelsons = $self->assignments->search(
+			{ key => { -ilike => '%nelson%' } },
+		);
+		my $rand = int(rand($nelsons->count)) + 1;
+		my ($nelson) = $nelsons->slice($rand, $rand + 1);
+
+		if($self->{_nelson}->{loaded}->{twitter}->{twitter}) {
+			$self->{_nelson}->{loaded}->{twitter}->{twitter}->update('@' . $sendto . ' ' . $nelson->value);
+			$message->reply('Haahaa! Successfully nelson\'ed @' . $sendto . ' via Twitter!');
+		}
+		else {
+			$message->reply('Twitter is not configured.');
+		}
 	}
 
 	return 1;
