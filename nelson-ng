@@ -35,7 +35,7 @@ $cfg->save if($ARGV{'-S'});
 # Required settings.
 my %req = (
 	( map { $_ => 'irc.' . $_ } qw( host nick channel ) ),
-	database => 'database.source',
+	# database => 'database.source',
 );
 
 while(my ($k, $v) = each %req) {

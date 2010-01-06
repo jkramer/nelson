@@ -36,13 +36,15 @@ sub setup {
 
 	$self->connection->setup(%cfg);
 
-	$self->schema->connection(
-		( map { $cfg{'database.' . $_} } qw( source user password ), ),
-		{
-			quote_char => '"',
-			name_sep   => '.',
-		}
-	);
+	if($cfg{'database.source'}) {
+		$self->schema->connection(
+			( map { $cfg{'database.' . $_} } qw( source user password ), ),
+			{
+				quote_char => '"',
+				name_sep   => '.',
+			}
+		);
+	}
 
 	# Load and initialize plugins.
 	for my $plugin ($self->plugins) {
