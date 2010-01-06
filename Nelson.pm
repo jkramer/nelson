@@ -88,6 +88,7 @@ sub run {
 	$self->_callback(376     => '_startup');
 	$self->_callback(PRIVMSG => '_message');
 	$self->_callback(KICK    => '_kicked');
+	$self->_callback(QUIT    => '_quit');
 
 	# Start.
 	$self->connection->connect;
@@ -125,6 +126,13 @@ sub _kicked {
 	my ($self, $message) = @_;
 
 	$self->_dispatch('kicked', $message);
+}
+
+
+sub _quit {
+	my ($self, $message) = @_;
+
+	$self->_dispatch('quit', $message);
 }
 
 
