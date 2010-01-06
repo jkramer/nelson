@@ -93,10 +93,7 @@ sub connect {
 sub send {
 	my $self = shift;
 
-	my $socket = $self->{socket};
-	my $prefix = $self->prefix;
-
-	$socket->print($prefix, "@_", "\r\n");
+	$self->{socket}->print($self->prefix, "@_", "\r\n");
 }
 
 
@@ -112,9 +109,8 @@ sub prefix {
 sub quit {
 	my ($self, $message) = @_;
 	$self->send($message ? ('QUIT', $message) : 'QUIT');
-	
-	my $socket = $self->{socket};
-	$socket->close;
+
+	$self->{socket}->close;
 }
 
 
@@ -126,8 +122,6 @@ sub loop {
 
 	while(my $message = readline($socket)) {
 		my ($prefix, $command, @p) = ($self->parse($message));
-
-		chomp $message;
 
 		$command = uc $command;
 
