@@ -25,8 +25,6 @@ sub initialize {
 sub quit {
 	my ($self, $message) = @_;
 
-	warn $message->from . ' <-> ' . $self->{watch_nick} . "\n";
-
 	if($message->from eq $self->{watch_nick}) {
 		my $mail = new Mail::SendEasy(
 			smtp => 'localhost',
