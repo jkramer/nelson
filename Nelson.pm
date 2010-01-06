@@ -46,8 +46,18 @@ sub setup {
 		);
 	}
 
+	my $plugin_load_list = $cfg{'plugins.load'};
+
 	# Load and initialize plugins.
 	for my $plugin ($self->plugins) {
+		if(ref($plugin_load_list) eq 'ARRAY') {
+			my $match = grep {
+				$plugin eq "Nelson::Plugin::$_"
+			} @$plugin_load_list;
+
+			next unless $match;
+		}
+
 		load $plugin;
 
 		next unless $plugin->can('namespace');
