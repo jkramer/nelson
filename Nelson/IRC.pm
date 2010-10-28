@@ -93,7 +93,10 @@ sub connect {
 sub send {
 	my $self = shift;
 
-	$self->{socket}->print($self->prefix, "@_", "\r\n");
+	my $socket = $self->{socket};
+	my $prefix = $self->prefix;
+
+	$socket->print($prefix, "@_", "\r\n");
 }
 
 
@@ -122,6 +125,8 @@ sub loop {
 
 	while(my $message = readline($socket)) {
 		my ($prefix, $command, @p) = ($self->parse($message));
+
+		chomp $message;
 
 		$command = uc $command;
 
@@ -178,7 +183,7 @@ sub join {
 sub message {
 	my ($self, $target, $text) = @_;
 
-	$self->send('PRIVMSG', $target, ":$text");
+	$self->send('PRIVMSG', $target, ":" . $text);
 }
 
 

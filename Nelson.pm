@@ -89,6 +89,7 @@ sub run {
 	$self->_callback(PRIVMSG => '_message');
 	$self->_callback(KICK    => '_kicked');
 	$self->_callback(QUIT    => '_quit');
+	$self->_callback(PING	 => '_pinged');
 
 	# Start.
 	$self->connection->connect;
@@ -120,6 +121,12 @@ sub _message {
 	my ($self, $message) = @_;
 
 	$self->_dispatch('message', $message);
+}
+
+sub _pinged {
+	my ($self, $message) = @_;
+
+	$self->_dispatch('ping', $message);
 }
 
 sub _kicked {
