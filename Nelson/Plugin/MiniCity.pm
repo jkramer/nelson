@@ -7,7 +7,7 @@ use warnings;
 use base qw( Nelson::Plugin );
 
 use XML::MiniCity;
-
+use Text::Conjunct;
 
 sub namespace { 'minicity' }
 
