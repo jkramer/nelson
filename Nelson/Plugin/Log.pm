@@ -12,7 +12,7 @@ use IO::File;
 sub namespace { 'log' }
 
 
-sub priority { 1000 }
+sub priority { 0 }
 
 
 sub initialize {
@@ -36,7 +36,7 @@ sub message {
 		my $text = $message->text;
 		my $time = localtime;
 
-		$self->{log_file}->write("$time $from: $text\n");
+		$self->{log_file}->write("$time <$from> $text\n");
 	}
 
 	return 1;
