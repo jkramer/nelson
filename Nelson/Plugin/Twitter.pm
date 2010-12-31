@@ -46,32 +46,20 @@ sub initialize {
 
 sub message {
 	my ($self, $message) = @_;
-	my @hashtag = qw( #loveparade #android #ipad #itampon #apple #h1n1 #bundestag #cdu #jesustweeters #fdp #spd #iphone #twitter #merkel #westerwelle #berlin #google );
-	my $rand = int(rand($#hashtag));
-	my $randhash = $hashtag[$rand];
 
 	if($message->text =~ /^!twit\s+(.+?)\s*$/) {
 		my $update = $1;
 
-		if($self->{twitter}) {
-			my ( $tosend );
-			my $len = length( $randhash );
-			my $mes = length( $update );
-			my $tot = ( $len + $mes );
-			if($tot > 140) {
-				$tosend = substr( $update, 0, ( 140 - $len - 6 ) ) . '[...]' . ' ' . $randhash;
-			}
-			else {
-				$tosend = $update . ' ' . $randhash;
-			}
+		my $tag = $self->tweet($update);
 
-			$self->{twitter}->update($tosend);
-			$message->reply('You suck twice as hard as ' . $randhash . '.');
+		if($tag) {
+			$message->reply('You suck twice as hard as ' . $tag . '.');
 		}
 		else {
 			$message->reply('Twitter is not configured.');
 		}
 	}
+
 	elsif($self->{twitter} && $message->text =~ /^!mention\s*$/) {
 		$message->reply($self->last_mention);
 	}
@@ -114,6 +102,40 @@ sub ping {
 
 	return 1;
 }
+
+
+sub tweet {
+	my ($self, $text) = @_;
+
+	if($self->{twitter}) {
+		my $tag = $self->_random_tag;
+
+		if(length($text) + length($tag) >= 138) {
+			$text = substr($text, 0, 140 - length($text) - length($tag) - 7) . ' [...]';
+		}
+
+		$text .= ' ' . $tag;
+
+		$self->{twitter}->update($text);
+		return $tag;
+	}
+	else {
+		return undef;
+	}
+}
+
+
+sub _random_tag {
+	my ($self) = @_;
+
+	my @hashtag = qw(
+		loveparade android ipad itampon apple h1n1 bundestag cdu jesustweeters
+		fdp spd iphone twitter merkel westerwelle berlin google
+	);
+
+	return '#' . $hashtag[int(rand(@hashtag))];
+}
+
 
 
 1

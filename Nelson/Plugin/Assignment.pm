@@ -19,16 +19,9 @@ sub ping {
 	if(uc($message->{command}) eq 'PING') {
 		my (undef, $min, undef) = localtime(time);
 
-		if( (int(rand(40)) % 40) == 0 ) {
-			my $nelsons = $self->assignments->search(
-				{ key => { -ilike => '%nelson%' } },
-			);
-
-			my $rand = int(rand($nelsons->count)) + 1;
-			my ($nelson) = $nelsons->slice($rand, $rand + 1);
-
+		if(!int rand 40) {
 			$message->{channel} = '#dokuleser';
-			$message->send('Random Nelson: ' . $nelson->value);
+			$message->send('Random Nelson: ' . $self->_random_nelson);
 		}
 	}
 
@@ -41,25 +34,6 @@ sub message {
 
 	my $text = $message->text;
 	my $from = $message->from;
-
-	my @hashtag = qw( #loveparade #android #ipad #itampon #apple #h1n1 #bundestag #cdu #jesustweeters #fdp #spd #iphone #twitter #merkel #westerwelle #berlin #google );
-	my $rand = int(rand($#hashtag));
-	my $randhash = $hashtag[$rand];
-
-	my %aliases = (
-		'syn'         => 'syn23',
-		'doomshammer' => 'doomshammer',
-		'flummox'     => 'stefan',
-		'flummi'      => 'stefan',
-		'doomy'       => 'doomshammer',
-		'syni'        => 'syn23',
-		'jkramer'     => 'herrnelson',
-		'cahne7Ki'    => 'herrnelson',
-		'cahne6Ki'    => 'herrnelson',
-		'unexist'     => 'unixist',
-		'fucki'       => 'herrnelson',
-		'fuckr'       => 'herrnelson',
-	);
 
 	if($text =~ /^!(?:assign|rem)\s+(.+?)\s*=\s*(.+?)\s*$/) {
 		my ($key, $value) = ($1, $2);
@@ -100,31 +74,19 @@ sub message {
 		$message->reply($self->find($1));
 	}
 
-	elsif($text =~ /^!nelson\s+(\w+)*\s*$/) {
-		my $nelsons = $self->assignments->search(
-			{ key => { -ilike => '%nelson%' } },
-		);
-		my $sendto = $1;
+	elsif($text =~ /^!nelson(?:\s+(\w+))?\s*$/) {
+		my $target = $1;
+		my $nelson = $self->_random_nelson;
 
-		my $rand = int(rand($nelsons->count)) + 1;
-		my ($nelson) = $nelsons->slice($rand, $rand + 1);
-
-		if(defined($sendto) and length($sendto)) {
-			$message->send($sendto . ': ' . $nelson->value);
+		if(defined($target) and length($target)) {
+			$message->send($target . ': ' . $nelson);
 		} else {
-			$message->send($nelson->value);
+			$message->send($nelson);
 		}
 	}
 
 	elsif($text =~ /^!selfnelson\s*$/) {
-		my $nelsons = $self->assignments->search(
-			{ key => { -ilike => '%nelson%' } },
-		);
-
-		my $rand = int(rand($nelsons->count)) + 1;
-		my ($nelson) = $nelsons->slice($rand, $rand + 1);
-
-		$message->reply($nelson->value);
+		$message->reply($self->_random_nelson);
 	}
 
 	elsif($text =~ /^!ftw\s*(.*)$/) {
@@ -133,75 +95,13 @@ sub message {
 	}
 
 	elsif($text =~ /^!twitson\s+(.+?)\s*$/) {
-		my $rsendto = $1;
+		my $nick = $1;
 
-		my $nelsons = $self->assignments->search(
-			{ key => { -ilike => '%nelson%' } },
-		);
-		my $rand = int(rand($nelsons->count)) + 1;
-		my ($nelson) = $nelsons->slice($rand, $rand + 1);
-
-		if($self->{_nelson}->{loaded}->{twitter}->{twitter}) {
-			my ($tosend, $sendto);
-			if(defined($aliases{lc($rsendto)})) {
-				$sendto = $aliases{ lc( $rsendto ) };
-			}
-			else {
-				$sendto = $rsendto;
-			}
-			my $update = $nelson->value;
-			my $len = length( $randhash );
-			my $mes = length( $update );
-			my $tol = length( '@' . $sendto . ' ' );
-			my $tot = ( $tol + $len + $mes );
-			if( $tot > 140 )
-			{
-				$tosend = substr( '@' . $sendto . ' ' . $update, 0, ( 140 - $len - $tol - 6 ) ) . '[...]' . ' ' . $randhash;
-
-			} else {
-
-				$tosend = '@' . $sendto . ' ' . $update . ' ' . $randhash;
-
-			}
-			$self->{_nelson}->{loaded}->{twitter}->{twitter}->update( $tosend );
-			$message->reply('Haahaa! Successfully nelson\'ed @' . $sendto . ' via Twitter! ' . $randhash);
-		}
-		else {
-			$message->reply('Twitter is not configured.');
-		}
+		$self->_tweet_nelson($message, $nick);
 	}
 
 	elsif($text =~ /^!randson\s*$/) {
-		my $sendto = $aliases{[keys %aliases]->[int rand keys %aliases]};
-
-		my $nelsons = $self->assignments->search(
-			{ key => { -ilike => '%nelson%' } },
-		);
-		my $rand = int(rand($nelsons->count)) + 1;
-		my ($nelson) = $nelsons->slice($rand, $rand + 1);
-
-		if($self->{_nelson}->{loaded}->{twitter}->{twitter}) {
-			my ( $tosend );
-			my $update = $nelson->value;
-			my $len = length( $randhash );
-			my $mes = length( $update );
-			my $tol = length( '@' . $sendto . ' ' );
-			my $tot = ( $tol + $len + $mes );
-			if( $tot > 140 )
-			{
-				$tosend = substr( '@' . $sendto . ' ' . $update, 0, ( 140 - $len - $tol - 6 ) ) . '[...]' . ' ' . $randhash;
-
-			} else {
-
-				$tosend = '@' . $sendto . ' ' . $update . ' ' . $randhash;
-
-			}
-			$self->{_nelson}->{loaded}->{twitter}->{twitter}->update( $tosend );
-			$message->reply('Haahaa! Successfully nelson\'ed @' . $sendto . ' via Twitter! ' . $randhash);
-		}
-		else {
-			$message->reply('Twitter is not configured.');
-		}
+		$self->_tweet_nelson($message, undef);
 	}
 
 	elsif($text =~ /^!fail\s(.+?)\s*$/) {
@@ -215,13 +115,6 @@ sub message {
 		my ($fail) = $fails->slice($rand, $rand + 1);
 
 		$message->send($sendto . ': Haahaa! You failed! -> ' . $fail->value);
-	}
-
-	if($message->{command} eq 'PING') {
-		my $rand = int(rand($self->assignments->count)) + 1;
-		my ($assignment) = $self->assignments->slice($rand, $rand + 1);
-
-		$message->send($self->_format($assignment));
 	}
 
 	return 1;
@@ -378,6 +271,83 @@ sub _format {
 	my $user     = $assignment->user;
 
 	return "'$key' is '$value' ($time, $user, r$revision).";
+}
+
+
+sub _tweet {
+	my ($self, $text, $nick) = @_;
+
+	return $self->{_nelson}->{loaded}->{twitter}->tweet('@' . $nick . ' ' . $text);
+}
+
+
+sub _aliases {
+	return (
+		'syn'         => 'syn23',
+		'doomshammer' => 'doomshammer',
+		'flummox'     => 'stefan',
+		'flummi'      => 'stefan',
+		'doomy'       => 'doomshammer',
+		'syni'        => 'syn23',
+		'jkramer'     => 'herrnelson',
+		'cahne7Ki'    => 'herrnelson',
+		'cahne6Ki'    => 'herrnelson',
+		'unexist'     => 'unixist',
+		'fucki'       => 'herrnelson',
+		'fuckr'       => 'herrnelson',
+	);
+}
+
+
+sub _resolve_nick {
+	my ($self, $nick) = @_;
+
+	my %aliases = $self->_aliases;
+
+	return $aliases{lc $nick} || $nick;
+}
+
+
+sub _tweet_nelson {
+	my ($self, $message, $nick) = @_;
+
+	my $nelson = $self->_random_nelson;
+	my $target = defined($nick) && length($nick) && $nick ? $self->_resolve_nick($nick) : $self->_random_user;
+
+	my $tag = $self->{_nelson}->{loaded}->{twitter}->tweet('@' . $target . ' ' . $nelson);
+
+	if($tag) {
+		$message->reply('Haahaa! Successfully nelson\'ed @' . $target . ' via Twitter! ' . $tag);
+	}
+	else {
+		$message->reply('Twitter is not configured.');
+	}
+}
+
+
+sub _random_nelson {
+	my ($self) = @_;
+
+	my $nelsons = $self->assignments->search(
+		{ key => { -ilike => '%nelson%' } },
+	);
+
+	my $rand = int(rand($nelsons->count)) + 1;
+	my ($nelson) = $nelsons->slice($rand, $rand + 1);
+
+	return $nelson->value;
+}
+
+
+sub _random_user {
+	my ($self) = @_;
+
+	my %aliases = $self->_aliases;
+
+	my %targets = map { $_ => } values %aliases;
+	my @targets = values %targets;
+
+	return $targets[int rand @targets];
 }
 
 
