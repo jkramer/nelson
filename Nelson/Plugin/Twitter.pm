@@ -111,6 +111,8 @@ sub ping {
 	}
 
 	$self->{last_check} = $now;
+
+	return 1;
 }
 
 
