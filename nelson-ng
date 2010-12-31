@@ -4,7 +4,7 @@ use strict;
 use warnings;
 
 use Config::Simple;
-use Getopt::LL::Simple qw( -f=s -h=s -p=d -s -n=s -c=s -P=s -S );
+use Getopt::LL::Simple qw( -f=s -h=s -p=d -s -n=s -c=s -P=s -b=s -S );
 
 use Nelson;
 
@@ -23,6 +23,7 @@ $cfg->param('irc.port'     => $ARGV{'-p'}) if($ARGV{'-p'});
 $cfg->param('irc.nick'     => $ARGV{'-n'}) if($ARGV{'-n'});
 $cfg->param('irc.channel'  => $ARGV{'-c'}) if($ARGV{'-c'});
 $cfg->param('irc.password' => $ARGV{'-P'}) if($ARGV{'-P'});
+$cfg->param('irc.bind' => $ARGV{'-b'}) if($ARGV{'-b'});
 
 # Set defaults unless overridden.
 $cfg->param('irc.port' => 6667    ) unless $cfg->param('irc.port' ) ;
@@ -35,7 +36,7 @@ $cfg->save if($ARGV{'-S'});
 # Required settings.
 my %req = (
 	( map { $_ => 'irc.' . $_ } qw( host nick channel ) ),
-	# database => 'database.source',
+	database => 'database.source',
 );
 
 while(my ($k, $v) = each %req) {
