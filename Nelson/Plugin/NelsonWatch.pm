@@ -27,17 +27,17 @@ sub quit {
 
 	if($message->from eq $self->{watch_nick}) {
 		my $mail = new Mail::SendEasy(
-			smtp => 'localhost',
+			smtp => $self->{mail_host},
 			user => $self->{mail_user},
 			pass => $self->{mail_pass},
 		);
 
 		$mail->send(
-			from => $self->{mail_from},
+			from       => $self->{mail_from},
 			from_title => $self->{mail_name},
-			to => $self->{mail_to},
-			subject => $self->{watch_nick} . ' is down - again!',
-			msg => 'Fix it!',
+			to         => $self->{mail_to},
+			subject    => $self->{watch_nick} . ' is down - again!',
+			msg        => 'Fix it!',
 		);
 	}
 
