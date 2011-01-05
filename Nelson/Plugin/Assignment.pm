@@ -345,7 +345,7 @@ sub _random_user {
 	my %aliases = $self->_aliases;
 
 	my %targets = map { $_ => 1 } values %aliases;
-	my @targets = values %targets;
+	my @targets = keys %targets;
 
 	return $targets[int rand @targets];
 }
