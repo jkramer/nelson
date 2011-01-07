@@ -78,6 +78,8 @@ sub last_mention {
 		$mention = $mentions->[0];
 	};
 
+	return undef unless $mention;
+
 	return "$mention->{text} (from \@$mention->{user}->{screen_name})";
 }
 
@@ -90,7 +92,7 @@ sub ping {
 	if($now > ($self->{last_check} + 60)) {
 		my $mention = $self->last_mention;
 
-		if($mention ne $self->{last_mention}) {
+		if(defined $mention && $mention ne $self->{last_mention}) {
 			$message->channel($self->{channel});
 			$message->send('New mention: ' . $mention);
 
