@@ -332,7 +332,7 @@ sub _random_nelson {
 		{ key => { -ilike => '%nelson%' } },
 	);
 
-	my $rand = int(rand($nelsons->count)) + 1;
+	my $rand = int(rand($nelsons->count));
 	my ($nelson) = $nelsons->slice($rand, $rand + 1);
 
 	return $nelson->value;
