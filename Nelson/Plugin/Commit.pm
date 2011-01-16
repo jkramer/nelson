@@ -7,7 +7,7 @@ use warnings;
 use base qw( Nelson::Plugin );
 
 use WWW::Mechanize;
-use Data::Dumper;
+#use Data::Dumper;
 
 
 sub namespace { 'commit' }
