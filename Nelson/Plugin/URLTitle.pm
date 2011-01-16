@@ -22,7 +22,9 @@ sub message {
 	$self->{_mechanize} ||= new WWW::Mechanize ( autocheck => 0, timeout => 2 );
 
 	if($message->text =~ m#(https?://\S+)#i and $message->text !~ m#^!short#) {
-		my $head = $self->mechanize->head($1);
+		my $url = $1;
+		return 1 if $url =~ m#http://www.imdb.com/title/#i;
+		my $head = $self->mechanize->head($url);
 		my $size = $head->{"_headers"}->{"content-length"} || 0;
 		my $type = $head->{"_headers"}->{"content-type"} || '';
 
@@ -30,7 +32,7 @@ sub message {
 			return 1;
 		}
 
-		my $result = $self->mechanize->get($1);
+		my $result = $self->mechanize->get($url);
 
 		if(defined($result) and length($result)) {
 			$message->reply($self->mechanize->title);
