@@ -159,7 +159,7 @@ sub _handle_direct_messages {
 		$message->command('PRIVMSG');
 		$message->channel($self->{channel});
 		$message->text($dm->{text});
-		$message->connection($self->nelson);
+		$message->connection($self->nelson->connection);
 
 		$self->nelson->inject_message($message);
 
