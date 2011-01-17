@@ -117,6 +117,14 @@ sub _startup {
 	$self->connection->join;
 }
 
+
+sub inject_message {
+	my ($self, $message) = @_;
+
+	$self->_message($message);
+}
+
+
 sub _message {
 	my ($self, $message) = @_;
 
