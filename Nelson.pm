@@ -128,6 +128,14 @@ sub inject_message {
 sub _message {
 	my ($self, $message) = @_;
 
+	# Remove leading and trailing spaces.
+	my $text = $message->text;
+
+	$text =~ s/^\s+//;
+	$text =~ s/\s+$//;
+
+	$message->text($text);
+
 	$self->_dispatch('message', $message);
 }
 
