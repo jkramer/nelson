@@ -104,6 +104,7 @@ sub run {
 	$self->_callback(KICK    => '_kicked');
 	$self->_callback(QUIT    => '_quit');
 	$self->_callback(PING	 => '_pinged');
+	$self->_callback(INVITE  => '_invited');
 
 	# Start.
 	$self->connection->connect;
@@ -170,6 +171,13 @@ sub _quit {
 	my ($self, $message) = @_;
 
 	$self->_dispatch('quit', $message);
+}
+
+
+sub _invited {
+	my ($self, $message) = @_;
+
+	$self->_dispatch('invite', $message);
 }
 
 
