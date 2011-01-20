@@ -67,7 +67,12 @@ sub message {
 		my $rand = int(rand($self->assignments->count)) + 1;
 		my ($assignment) = $self->assignments->slice($rand, $rand + 1);
 
-		$message->send($self->_format($assignment));
+		if($assignment) {
+			$message->send($self->_format($assignment));
+		}
+		else {
+			$message->send("Nothing here.");
+		}
 	}
 
 	elsif($text =~ /^!find\s+(.+?)\s*$/) {
