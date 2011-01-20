@@ -48,14 +48,28 @@ sub setup {
 
 	my $plugin_load_list = $cfg{'plugins.load'};
 
+	my $plugin_ignore_list = $cfg{'plugins.ignore'};
+
 	# Load and initialize plugins.
 	for my $plugin ($self->plugins) {
+
+		# If "plugins.load" is available, load only plugins listed there.
 		if(ref($plugin_load_list) eq 'ARRAY') {
 			my $match = grep {
 				$plugin eq "Nelson::Plugin::$_"
 			} @$plugin_load_list;
 
 			next unless $match;
+		}
+
+		# Otherwise, if "pluins.ignore" is available, skip plugins listed
+		# there.
+		elsif(ref($plugin_ignore_list) eq 'ARRAY') {
+			my $match = grep {
+				$plugin eq "Nelson::Plugin::$_"
+			} @$plugin_ignore_list;
+
+			next if $match;
 		}
 
 		load $plugin;
