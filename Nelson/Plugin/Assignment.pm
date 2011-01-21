@@ -20,7 +20,7 @@ sub ping {
 		my (undef, $min, undef) = localtime(time);
 
 		if(!int rand 40) {
-			$message->{channel} = '#dokuleser';
+			$message->{channel} = $self->nelson->connection->channel;
 			$message->send('Random Nelson: ' . $self->_random_nelson);
 		}
 	}
