@@ -192,4 +192,16 @@ sub _dispatch {
 }
 
 
+sub plugin {
+	my ($self, $name) = @_;
+
+	if(exists($self->loaded->{$name})) {
+		return $self->loaded->{$name};
+	}
+	else {
+		return undef;
+	}
+}
+
+
 1
