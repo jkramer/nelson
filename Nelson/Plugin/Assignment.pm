@@ -122,6 +122,19 @@ sub message {
 		$message->send($sendto . ': Haahaa! You failed! -> ' . $fail->value);
 	}
 
+	elsif($text =~ /^!give\s+(\S+)\s+(.+?)\s*$/) {
+		my ($target, $key) = ($1, $2);
+
+		my $assignment = $self->resolve($key);
+
+		if($assignment) {
+			$message->connection->message($message->channel, $target . ': ' . $assignment->value);
+		}
+		else {
+			$message->reply('Meh.');
+		}
+	}
+
 	return 1;
 }
 
