@@ -293,31 +293,17 @@ sub _tweet {
 }
 
 
-sub _aliases {
-	return (
-		'syn'         => 'syn23',
-		'doomshammer' => 'doomshammer',
-		'flummox'     => 'stefan',
-		'flummi'      => 'stefan',
-		'doomy'       => 'doomshammer',
-		'syni'        => 'syn23',
-		'jkramer'     => 'herrnelson',
-		'cahne7Ki'    => 'herrnelson',
-		'cahne6Ki'    => 'herrnelson',
-		'unexist'     => 'unixist',
-		'fucki'       => 'herrnelson',
-		'fuckr'       => 'herrnelson',
-		'fox'         => '',
-	);
-}
-
-
 sub _resolve_nick {
 	my ($self, $nick) = @_;
 
-	my %aliases = $self->_aliases;
+	my $alias_plugin = $self->nelson->plugin('aliases');
 
-	return $aliases{lc $nick} || $nick;
+	if($alias_plugin) {
+		return $alias_plugin->resolve_nick($nick);
+	}
+	else {
+		return $nick;
+	}
 }
 
 
@@ -362,12 +348,14 @@ sub _random_nelson {
 sub _random_user {
 	my ($self) = @_;
 
-	my %aliases = $self->_aliases;
+	my $alias_plugin = $self->nelson->plugin('aliases');
 
-	my %targets = map { $_ => 1 } values %aliases;
-	my @targets = keys %targets;
-
-	return $targets[int rand @targets];
+	if($alias_plugin) {
+		return $alias_plugin->random_user;
+	}
+	else {
+		return '$RANDOM_PERSON';
+	}
 }
 
 
