@@ -47,8 +47,14 @@ sub setup {
 	}
 
 	my $plugin_load_list = $cfg{'plugins.load'};
+	if($plugin_load_list && !ref($plugin_load_list)) {
+		$plugin_load_list = [ $plugin_load_list ];
+	}
 
 	my $plugin_ignore_list = $cfg{'plugins.ignore'};
+	if($plugin_ignore_list && !ref($plugin_ignore_list)) {
+		$plugin_ignore_list = [ $plugin_ignore_list ];
+	}
 
 	# Load and initialize plugins.
 	for my $plugin ($self->plugins) {
