@@ -282,7 +282,14 @@ sub _format {
 sub _tweet {
 	my ($self, $text, $nick) = @_;
 
-	return $self->{_nelson}->{loaded}->{twitter}->tweet('@' . $nick . ' ' . $text);
+	my $twitter_plugin = $self->nelson->plugin('twitter');
+
+	if($twitter_plugin) {
+		return $twitter_plugin->tweet('@' . $nick . ' ' . $text);
+	}
+	else {
+		return undef;
+	}
 }
 
 
@@ -300,6 +307,7 @@ sub _aliases {
 		'unexist'     => 'unixist',
 		'fucki'       => 'herrnelson',
 		'fuckr'       => 'herrnelson',
+		'fox'         => '',
 	);
 }
 
@@ -316,16 +324,23 @@ sub _resolve_nick {
 sub _tweet_nelson {
 	my ($self, $message, $nick) = @_;
 
-	my $nelson = $self->_random_nelson;
-	my $target = defined($nick) && length($nick) && $nick ? $self->_resolve_nick($nick) : $self->_random_user;
+	my $twitter_plugin = $self->nelson->plugin('twitter');
 
-	my $tag = $self->{_nelson}->{loaded}->{twitter}->tweet('@' . $target . ' ' . $nelson);
+	if($twitter_plugin) {
+		my $nelson = $self->_random_nelson;
+		my $target = defined($nick) && length($nick) && $nick ? $self->_resolve_nick($nick) : $self->_random_user;
 
-	if($tag) {
-		$message->reply('Haahaa! Successfully nelson\'ed @' . $target . ' via Twitter! ' . $tag);
+		my $tag = $twitter_plugin->tweet('@' . $target . ' ' . $nelson);
+
+		if($tag) {
+			$message->reply('Haahaa! Successfully nelson\'ed @' . $target . ' via Twitter! ' . $tag);
+		}
+		else {
+			$message->reply('Twitter is not configured.');
+		}
 	}
 	else {
-		$message->reply('Twitter is not configured.');
+		$message->reply('Twitter plugin not available.');
 	}
 }
 
