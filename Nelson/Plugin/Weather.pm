@@ -33,7 +33,7 @@ sub message {
 		my $temp_k = ($temp_c + 273.15);
 		my $cond = $self->{_weather}->current('condition') || 'Unknown';
 
-		if(defined($temp_c) and length($temp_c)) {
+		if(defined($city) and length($city)) {
 			$message->reply(
 				'The current conditions in ' . $city . ' are: ' . $cond . ' at ' . $temp_c . $grad . 'C ( '
 				. $temp_f . $grad . 'F / ' . $temp_k . 'K )'
@@ -53,7 +53,7 @@ sub message {
 		my $high_c = sprintf('%.2f', (($high_f - 32) * (5 / 9)));
 		my $low_c = sprintf('%.2f', (($low_f - 32) * (5 / 9)));
 
-		if(defined($cond) and length($cond)) {
+		if(defined($city) and length($city)) {
 			$message->reply(
 				'The forcast conditions for ' . $day . ' in ' . $city . ' are: ' . $cond . ' at ' . $high_c . $grad . 'C (highest) / '
 				. $low_c . $grad . 'C (lowest)'
