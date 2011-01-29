@@ -31,9 +31,9 @@ sub message {
 		my $temp_f = $self->{_weather}->current('temp_f');
 		my $temp_c = sprintf('%.2f', (($temp_f - 32 ) * (5 / 9)));
 		my $temp_k = ($temp_c + 273.15);
-		my $cond = $self->{_weather}->current('condition');
+		my $cond = $self->{_weather}->current('condition') || 'Unknown';
 
-		if(defined($cond) and length($cond)) {
+		if(defined($temp_c) and length($temp_c)) {
 			$message->reply(
 				'The current conditions in ' . $city . ' are: ' . $cond . ' at ' . $temp_c . $grad . 'C ( '
 				. $temp_f . $grad . 'F / ' . $temp_k . 'K )'
