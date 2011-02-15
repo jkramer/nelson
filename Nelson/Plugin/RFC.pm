@@ -34,7 +34,13 @@ sub message {
 		my $result = $self->mechanize->get($url);
 
 		if(defined($result) and length($result)) {
-			$message->reply($self->mechanize->title . ' // ' . $url);
+			my $title = $self->mechanize->title;
+
+			if($title ne 'File not found! - faqs.org') {
+				$message->reply($self->mechanize->title . ' // ' . $url);
+			} else {
+				$message->reply('Haahaa! That RFC doesn\'t exist!');
+			}
 		} else {
 			$message->reply("Nop! You stink!");
 		}
