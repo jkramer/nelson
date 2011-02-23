@@ -89,22 +89,28 @@ sub last_mention {
 sub ping {
 	my ($self, $message) = @_;
 
-	my $now = time;
+	eval {
+		my $now = time;
 
-	if($now > ($self->{last_check} + 60)) {
-		my $mention = $self->last_mention;
+		if($now > ($self->{last_check} + 60)) {
+			my $mention = $self->last_mention;
 
-		if(defined $mention && $mention ne $self->{last_mention}) {
-			$message->channel($self->{channel});
-			$message->send('New mention: ' . $mention);
+			if(defined $mention && $mention ne $self->{last_mention}) {
+				$message->channel($self->{channel});
+				$message->send('New mention: ' . $mention);
 
-			$self->{last_mention} = $mention;
+				$self->{last_mention} = $mention;
+			}
 		}
+
+		$self->{last_check} = $now;
+
+		$self->_handle_direct_messages;
+	};
+
+	if($@) {
+		# Haahaa! Mir doch wumpe!
 	}
-
-	$self->{last_check} = $now;
-
-	$self->_handle_direct_messages;
 
 	return 1;
 }
