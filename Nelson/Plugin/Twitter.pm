@@ -154,7 +154,7 @@ sub _handle_direct_messages {
 
 	my $dm_list = $self->{twitter}->direct_messages;
 
-	for my $dm (@$dm_list) {
+	for my $dm (reverse @$dm_list) {
 		my $from = $dm->{sender_screen_name};
 
 		$self->nelson->connection->message($self->{channel}, $from . ' via DM: ' . $dm->{text});
