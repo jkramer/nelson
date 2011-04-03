@@ -13,7 +13,7 @@ my ($cfg_path) = grep {
 	defined($_) and -r $_
 } $ARGV{'-f'}, 'nelson.ini', $ENV{HOME} . '/.nelson.ini', '/etc/nelson.ini';
 
-die "No readble configuration found.\n" unless $cfg_path;
+die "No readable configuration found.\n" unless $cfg_path;
 
 my $cfg = new Config::Simple($cfg_path);
 
