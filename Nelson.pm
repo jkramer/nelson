@@ -10,6 +10,7 @@ use Module::Load;
 
 use Nelson::Connection;
 use Nelson::Schema;
+use Nelson::Schedule;
 
 use base qw( Class::Class );
 
@@ -104,6 +105,8 @@ sub setup {
 sub run {
 	my ($self) = @_;
 
+	$0 = 'nelson-ng [event loop]';
+
 	# Setup callbacks.
 	$self->_callback(376     => '_startup');
 	$self->_callback(PRIVMSG => '_message');
@@ -136,6 +139,8 @@ sub _startup {
 
 	# Join channel.
 	$self->connection->join;
+
+	Nelson::Schedule->instance->fork_loop;
 }
 
 
@@ -215,6 +220,11 @@ sub plugin {
 	else {
 		return undef;
 	}
+}
+
+
+END {
+	Nelson::Schedule->instance->terminate;
 }
 
 
