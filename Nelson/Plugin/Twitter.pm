@@ -48,9 +48,17 @@ sub initialize {
 
 	Nelson::Schedule->instance->register(
 		new Nelson::Schedule::Job(
-			'twitter',
+			'twitter dms',
 			20,
 			sub { eval { $self->_handle_direct_messages } },
+		)
+	);
+
+	Nelson::Schedule->instance->register(
+		new Nelson::Schedule::Job(
+			'twitter mentions',
+			30,
+			sub { eval { $self->_handle_mentions } },
 		)
 	);
 }
@@ -150,6 +158,22 @@ sub _handle_direct_messages {
 		$self->nelson->inject_message($message);
 
 		$self->{twitter}->destroy_direct_message($dm->{id});
+	}
+}
+
+
+sub _handle_mentions {
+	my ($self) = @_;
+
+	my $mention = $self->last_mention;
+
+	if($mention ne $self->{last_mention}) {
+		$self->nelson->connection->message(
+			$self->{channel},
+			$mention
+		);
+
+		$self->{last_mention} = $mention;
 	}
 }
 
