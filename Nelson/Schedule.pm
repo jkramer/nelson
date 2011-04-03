@@ -58,7 +58,7 @@ sub fork_loop {
 sub get_next_job {
 	my ($self) = @_;
 
-	my ($next_job) = sort { $a->next <=> $b->next } @{$self->{jobs}};
+	my ($next_job) = $self->jobs;
 
 	return $next_job;
 }
@@ -68,6 +68,13 @@ sub register {
 	my ($self, $job) = @_;
 
 	push @{$self->{jobs}}, $job;
+}
+
+
+sub jobs {
+	my ($self) = @_;
+
+	return sort { $a->next <=> $b->next } @{$self->{jobs}};
 }
 
 
