@@ -8,6 +8,9 @@ use base qw( Nelson::Plugin );
 
 use Net::Twitter;
 
+use Nelson::Schedule;
+use Nelson::Schedule::Job;
+
 
 sub namespace { 'twitter' }
 
@@ -40,9 +43,16 @@ sub initialize {
 	$self->{twitter}->access_token($cfg{access_token});
 	$self->{twitter}->access_token_secret($cfg{access_token_secret});
 
-	$self->{last_check} = time;
 	$self->{last_mention} = '';
 	$self->{channel} = $cfg{channel};
+
+	Nelson::Schedule->instance->register(
+		new Nelson::Schedule::Job(
+			'twitter',
+			20,
+			sub { eval { $self->_handle_direct_messages } },
+		)
+	);
 }
 
 
@@ -83,36 +93,6 @@ sub last_mention {
 	return undef unless $mention;
 
 	return "$mention->{text} (from \@$mention->{user}->{screen_name})";
-}
-
-
-sub ping {
-	my ($self, $message) = @_;
-
-	eval {
-		my $now = time;
-
-		if($now > ($self->{last_check} + 60)) {
-			my $mention = $self->last_mention;
-
-			if(defined $mention && $mention ne $self->{last_mention}) {
-				$message->channel($self->{channel});
-				$message->send('New mention: ' . $mention);
-
-				$self->{last_mention} = $mention;
-			}
-		}
-
-		$self->{last_check} = $now;
-
-		$self->_handle_direct_messages;
-	};
-
-	if($@) {
-		# Haahaa! Mir doch wumpe!
-	}
-
-	return 1;
 }
 
 
