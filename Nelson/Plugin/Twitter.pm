@@ -167,7 +167,7 @@ sub _handle_mentions {
 
 	my $mention = $self->last_mention;
 
-	if($mention ne $self->{last_mention}) {
+	if($mention && $mention ne $self->{last_mention}) {
 		$self->nelson->connection->message(
 			$self->{channel},
 			$mention
