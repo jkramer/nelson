@@ -19,7 +19,9 @@ sub message {
 	if($message->text =~ /^!(--|\+\+)\s*(.+?)\s*$/) {
 		my ($mode, $key) = ($1, $2);
 
-		my $score = $self->scores->single({ key => { -ilike => $key }});
+		my $score = $self->scores->single(
+			\[ "LOWER(key) LIKE ?", [ key => $key ] ],
+		);
 		my $modification = $mode eq '++' ? 1 : -1;
 
 		if($score) {

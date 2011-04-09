@@ -113,7 +113,7 @@ sub message {
 		my $sendto = $1;
 
 		my $fails = $self->assignments->search(
-			{ key => { -ilike => '%fail%' } },
+			\[ "LOWER(key) LIKE '%fail%'" ]
 		);
 
 		my $rand = int(rand($fails->count)) + 1;
@@ -187,8 +187,8 @@ sub find {
 	my $result = $self->assignments->search(
 		{
 			-or => [
-			key => { -ilike => '%' . $needle . '%' },
-			value => { -ilike => '%' . $needle . '%' },
+				\[ "LOWER(key) LIKE '%' || ? || '%'", [ key => lc($needle) ]],
+				\[ "LOWER(value) LIKE '%' || ? || '%'", [ key => lc($needle) ]],
 			],
 		},
 		{
@@ -218,10 +218,14 @@ sub read {
 	my $assignment = $self->resolve($key, $revision);
 
 	if(!$assignment) {
-		my $result = $self->assignments->search( { key => { -ilike => $key . '%' } } );
+		my $result = $self->assignments->search(
+			\[ "LOWER(key) LIKE ? || '%'", [ key => lc($key) ]],
+		);
 
 		if($result->count != 1) {
-			$result = $self->assignments->search( { key => { -ilike => '%' . $key . '%' } } );
+			$result = $self->assignments->search(
+				\[ "LOWER(key) LIKE '%' || ? || '%'", [ key => lc($key) ]],
+			);
 		}
 
 		if($result->count > 1) {
@@ -258,12 +262,13 @@ sub resolve {
 
 	if(defined($revision) and length($revision)) {
 		$result = $self->assignments->search(
-			{ key => { -ilike => $key }, revision => $revision, },
+			\[ "LOWER(key) LIKE ?", [ key => lc($key) ]],
+			revision => $revision,
 		);
 	}
 	else {
 		$result = $self->assignments->search(
-			{ key => { -ilike => $key }, },
+			\[ "LOWER(key) LIKE ?", [ key => lc($key) ]],
 			{ order_by => \'revision DESC', }
 		);
 	}
@@ -348,7 +353,7 @@ sub _random_nelson {
 	my ($self) = @_;
 
 	my $nelsons = $self->assignments->search(
-		{ key => { -ilike => '%nelson%' } },
+		\[ "LOWER(key) LIKE '%nelson%'" ]
 	);
 
 	my $rand = int(rand($nelsons->count));

@@ -38,12 +38,20 @@ sub setup {
 	$self->connection->setup(%cfg);
 
 	if($cfg{'database.source'}) {
+		my $options = {};
+
+		for(qw( quote_char name_sep )) {
+			if(exists($cfg{'database.' . $_})) {
+				$options->{$_} = $cfg{'database.' . $_};
+				print "$_ = $options->{$_}\n";
+			}
+		}
+
+		$options->{quote_char} = '"' unless exists($options->{quote_char});
+
 		$self->schema->connection(
 			( map { $cfg{'database.' . $_} } qw( source user password ), ),
-			{
-				quote_char => '"',
-				name_sep   => '.',
-			}
+			$options
 		);
 	}
 
