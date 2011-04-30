@@ -19,7 +19,11 @@ sub priority { 1000 }
 sub message {
 	my ($self, $message) = @_;
 
-	$self->{_mechanize} ||= new WWW::Mechanize ( autocheck => 0, timeout => 2 );
+	$self->{_mechanize} ||= new WWW::Mechanize(
+		autocheck => 0,
+		timeout => 2,
+		agent => 'Linux Mozilla',
+	);
 
 	if($message->text =~ m#(https?://\S+)#i and $message->text !~ m#^!short#) {
 		my $url = $1;
