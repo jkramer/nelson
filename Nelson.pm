@@ -43,7 +43,6 @@ sub setup {
 		for(qw( quote_char name_sep )) {
 			if(exists($cfg{'database.' . $_})) {
 				$options->{$_} = $cfg{'database.' . $_};
-				print "$_ = $options->{$_}\n";
 			}
 		}
 
