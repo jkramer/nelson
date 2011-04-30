@@ -1,4 +1,3 @@
-
 package Nelson::Schedule;
 
 use strict;
@@ -82,7 +81,7 @@ sub terminate {
 	my ($self) = @_;
 
 	if($self->{loop_pid}) {
-		kill $self->{loop_pid};
+		kill 'KILL', $self->{loop_pid};
 		wait;
 	}
 }
