@@ -26,8 +26,6 @@ sub message {
 		else {
 			$message->reply(q#I'm already up-to-date.#);
 		}
-
-		$self->_update;
 	}
 }
 
