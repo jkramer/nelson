@@ -78,4 +78,11 @@ sub message {
 }
 
 
+sub disconnect {
+	my ($self, $message) = @_;
+
+	$self->irc->quit;
+}
+
+
 1

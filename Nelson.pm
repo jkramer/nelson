@@ -112,6 +112,8 @@ sub setup {
 sub run {
 	my ($self) = @_;
 
+	$self->{original_0} = $0;
+
 	$0 = 'nelson-ng [event loop]';
 
 	# Setup callbacks.
@@ -124,6 +126,8 @@ sub run {
 
 	# Start.
 	$self->connection->connect;
+
+	$0 = $self->{original_0};
 }
 
 
@@ -227,6 +231,20 @@ sub plugin {
 	else {
 		return undef;
 	}
+}
+
+
+sub restart {
+	my ($self) = @_;
+
+	my @cmd = ($self->{original_0} || $0, %ARGV);
+
+	unshift @cmd, 'perl' if($0 !~ m#(^|/)perl$#);
+
+	Nelson::Schedule->instance->terminate;
+	$self->connection->disconnect;
+
+	exec(@cmd);
 }
 
 

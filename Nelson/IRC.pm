@@ -123,7 +123,8 @@ sub loop {
 
 	my $socket = $self->{socket};
 
-	while(my $message = readline($socket)) {
+	until(eof($socket)) {
+		my $message = readline($socket);
 		my ($prefix, $command, @p) = ($self->parse($message));
 
 		chomp $message;

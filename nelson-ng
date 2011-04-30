@@ -48,4 +48,10 @@ my $nelson = new Nelson;
 
 # Run it.
 $nelson->setup($cfg->vars);
-$nelson->run;
+
+while(1) {
+	$nelson->run;
+
+	print "Fell out of the loop. Let's try again in a few seconds.\n";
+	sleep 10;
+}
