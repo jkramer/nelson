@@ -94,7 +94,7 @@ sub last_mention {
 	my $mention;
 
 	eval {
-		my $mentions = $self->{twitter}->mentions( { count => 1 } );
+		my $mentions = $self->{twitter}->mentions( { count => 1, since => (time - 600) } );
 		$mention = $mentions->[0];
 	};
 
