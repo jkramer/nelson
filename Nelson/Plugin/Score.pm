@@ -20,7 +20,7 @@ sub message {
 		my ($mode, $key) = ($1, $2);
 
 		my $score = $self->scores->single(
-			\[ "LOWER(key) LIKE ?", [ key => $key ] ],
+			\[ "LOWER(key) LIKE ?", [ key => lc $key ] ],
 		);
 		my $modification = $mode eq '++' ? 1 : -1;
 
