@@ -262,8 +262,12 @@ sub resolve {
 
 	if(defined($revision) and length($revision)) {
 		$result = $self->assignments->search(
-			\[ "LOWER(key) LIKE ?", [ key => lc($key) ]],
-			revision => $revision,
+			{
+				-and => [
+					revision => $revision,
+					\[ "LOWER(key) LIKE ?", [ key => lc($key) ]],
+				]
+			},
 		);
 	}
 	else {
