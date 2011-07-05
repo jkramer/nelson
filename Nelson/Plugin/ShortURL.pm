@@ -46,6 +46,27 @@ sub message {
 			$message->reply("Nop! You stink!");
 		}
 	}
+	
+	if($message->text =~ m#^!custurl (\S+) (https?://\S+)#i) {
+		my $url = new URI('http://nop.li/yourls-api.php');
+
+		$url->query_form(
+			action   => 'shorturl',
+			url      => $2,
+			keyword	 => $1,
+			username => $self->{username},
+			password => $self->{password},
+			format   => 'simple',
+		);
+
+		my $result = $self->mechanize->get($url);
+
+		if(defined($result) and length($result)) {
+			$message->reply($self->mechanize->content);
+		} else {
+			$message->reply("Nop! You stink!");
+		}
+	}
 
 	return 1;
 }
