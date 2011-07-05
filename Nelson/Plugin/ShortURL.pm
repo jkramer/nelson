@@ -27,16 +27,34 @@ sub initialize {
 sub message {
 	my ($self, $message) = @_;
 
-	if($message->text =~ m#^!short (https?://\S+)#i) {
+	if($message->text =~ m#^!short\s+(\S+)?\s?(https?://\S+)#i) {
 		my $url = new URI('http://nop.li/yourls-api.php');
 
-		$url->query_form(
-			action   => 'shorturl',
-			url      => $1,
-			username => $self->{username},
-			password => $self->{password},
-			format   => 'simple',
-		);
+		my $longurl = $2;
+		my $custom  = $1;
+
+		if(defined($custom)) {
+			
+			$url->query_form(
+				action   => 'shorturl',
+				url      => $longurl,
+				keyword  => $custom,
+				username => $self->{username},
+				password => $self->{password},
+				format   => 'simple',
+			);
+
+		} else {
+			
+			$url->query_form(
+				action   => 'shorturl',
+				url      => $longurl,
+				username => $self->{username},
+				password => $self->{password},
+				format   => 'simple',
+			);
+
+		}
 
 		my $result = $self->mechanize->get($url);
 
@@ -47,27 +65,6 @@ sub message {
 		}
 	}
 	
-	if($message->text =~ m#^!custurl (\S+) (https?://\S+)#i) {
-		my $url = new URI('http://nop.li/yourls-api.php');
-
-		$url->query_form(
-			action   => 'shorturl',
-			url      => $2,
-			keyword	 => $1,
-			username => $self->{username},
-			password => $self->{password},
-			format   => 'simple',
-		);
-
-		my $result = $self->mechanize->get($url);
-
-		if(defined($result) and length($result)) {
-			$message->reply($self->mechanize->content);
-		} else {
-			$message->reply("Nop! You stink!");
-		}
-	}
-
 	return 1;
 }
 

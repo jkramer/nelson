@@ -21,7 +21,7 @@ sub message {
 
 	$self->{_mechanize} ||= new WWW::Mechanize ( autocheck => 0, timeout => 2 );
 
-	if($message->text =~ m#(https?://\S+)#i and $message->text !~ m#^!short# and $message->text !~ m#^!custurl#) {
+	if($message->text =~ m#(https?://\S+)#i and $message->text !~ m#^!short#) {
 		my $url = $1;
 		return 1 if $url =~ m#http://www.imdb.com/title/#i;
 		my $head = $self->mechanize->head($url);
