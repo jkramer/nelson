@@ -16,7 +16,7 @@ sub priority { 1 }
 sub message {
 	my ($self, $message) = @_;
 
-	return $message->text =~ /^((?:\d*)!|.*https?:\/\/\S+.*)/;
+	return $message->text =~ /^((?:\d*)!|^[a-z]+\?|.*https?:\/\/\S+.*)/;
 }
 
 
