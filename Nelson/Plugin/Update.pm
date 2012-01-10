@@ -27,6 +27,8 @@ sub message {
 			$message->reply(q#I'm already up-to-date.#);
 		}
 	}
+
+	return 1;
 }
 
 
