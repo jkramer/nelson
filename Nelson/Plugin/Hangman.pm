@@ -90,6 +90,8 @@ sub message {
 			$message->send($self->game_status);
 		}
 	}
+
+	return 1;
 }
 
 
