@@ -99,7 +99,7 @@ sub message {
 		$message->send($sendto . ' ftw! \o/');
 	}
 
-	elsif($text =~ /^!twitson\s+(.+?)\s*$/) {
+	elsif($text =~ /^!twitson\s+\@*(.+?)\s*$/) {
 		my $nick = $1;
 
 		$self->_tweet_nelson($message, $nick);
