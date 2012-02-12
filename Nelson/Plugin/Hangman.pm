@@ -46,8 +46,10 @@ sub message {
 		my $changes = 0;
 
 		for my $word ($line =~ /(?=(?:^|\s)([a-z]{4,})(?:\s|$))/ig) {
-			$self->{wordlist}->{$word}++;
-			++$changes;
+			if(($self->{wordlist}->{$word} || 0) > -1) {
+				$self->{wordlist}->{$word}++;
+				++$changes;
+			}
 		}
 
 		$self->store_wordlist if($changes);
