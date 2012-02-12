@@ -91,6 +91,11 @@ sub message {
 		}
 	}
 
+	elsif($message->text =~ /^!blacklist\s+([a-z]+)\s*$/) {
+		$self->{wordlist}->{$1} = -1;
+		$self->store_wordlist;
+	}
+
 	return 1;
 }
 
@@ -135,21 +140,54 @@ sub game_status {
 sub random_word {
 	my ($self) = @_;
 
-	my $words = $self->{wordlist};
+	my @words = $self->good_words;
 
-	my $count = keys(%$words);
-
-	if($count) {
-		my $sum = sum(values %$words);
-		my $high = ($sum / $count);
-
-		my @candidates = grep { $words->{$_} <= $high } keys(%$words);
-
-		return $candidates[int rand scalar @candidates] || 'hangman';
+	if(@words) {
+		return $words[int rand scalar @words];
 	}
 	else {
 		return 'hangman';
 	}
+}
+
+
+sub good_words {
+	my ($self) = @_;
+
+	my %words = %{$self->{wordlist}};
+	my $total = 0;
+
+	for my $word (keys %words) {
+		if($words{$word} == -1) {
+			print "$word is blacklisted\n";
+			next;
+		}
+
+		my %letters = map { $_ => 1 } split //, $word;
+
+		if(
+			length($word) / scalar(keys %letters) > 3.0
+			||
+			keys(%letters) < 3 || $word =~ /([aeiou])\1{2}/
+		) {
+			delete $words{$word};
+		}
+		else {
+			$total += $words{$word};
+		}
+	}
+
+	my $max = $total / 10.0;
+	my @good_words;
+	my $score = 0;
+
+	for my $word (sort { $words{$a} <=> $words{$b} || length($b) <=> length($a) } keys(%words)) {
+		$score += $words{$word};
+		push @good_words, $word;
+		last if($score >= $max);
+	}
+
+	return @good_words;
 }
 
 
