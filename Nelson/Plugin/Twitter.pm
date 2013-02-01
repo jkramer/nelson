@@ -1,4 +1,3 @@
-
 package Nelson::Plugin::Twitter;
 
 use strict;
@@ -130,7 +129,7 @@ sub _random_tag {
 
 	my @hashtag = qw(
 		loveparade android ipad itampon apple h1n1 bundestag cdu jesustweeters
-		fdp spd iphone twitter merkel westerwelle berlin google
+		fdp spd iphone twitter merkel westerwelle berlin google aufschrei
 	);
 
 	return '#' . $hashtag[int(rand(@hashtag))];
