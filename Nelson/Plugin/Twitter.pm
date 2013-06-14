@@ -36,7 +36,7 @@ sub initialize {
 	$self->{twitter} = new Net::Twitter(
 		consumer_key	=> $cfg{consumer_key},
 		consumer_secret	=> $cfg{consumer_secret},
-		traits		=> ['API::REST', 'OAuth'],
+		traits		=> ['API::RESTv1_1', 'OAuth'],
 	);
 
 	$self->{twitter}->access_token($cfg{access_token});
