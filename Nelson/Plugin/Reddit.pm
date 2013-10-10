@@ -6,7 +6,8 @@ use warnings;
 
 use base qw( Nelson::Plugin );
 
-use Reddit::Client;
+use WWW::Mechanize;
+use JSON;
 
 
 sub namespace { 'reddit' }
@@ -18,14 +19,18 @@ sub priority { 999 }
 sub message {
 	my ($self, $message) = @_;
 
-	$self->{client} ||= Reddit::Client->new;
+	$self->{mech} ||= WWW::Mechanize->new;
 
 	if($message->text =~ /^!aww\s*$/) {
-		my $links = $self->{client}->fetch_links(subreddit => '/r/aww', limit => 50);
+		$self->{mech}->get('http://www.reddit.com/r/aww/hot.json');
 
-		my $link = $links->{items}->[int rand 50];
+		my $data = from_json($self->{mech}->content);
 
-		$message->reply("Here's some cute shit for you: " . $link->{url});
+		my $items = $data->{data}->{children};
+
+		my $item = $items->[int rand scalar(@$items)];
+
+		$message->reply("Here's some cute shit for you: " . $item->{data}->{url});
 	}
 }
 
