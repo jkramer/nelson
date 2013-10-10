@@ -19,7 +19,7 @@ sub initialize {
 	my ($self, $nelson, %cfg) = @_;
 
 	if($cfg{path}) {
-		$self->{log_file} = new IO::File($cfg{path}, '>>');
+		$self->{log_file} = new IO::File($cfg{path}, '>>') or die "Can't create log file $cfg{path}.\n";
 		$self->{log_file}->autoflush(1);
 	}
 	else {
