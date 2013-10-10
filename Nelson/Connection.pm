@@ -4,6 +4,8 @@ package Nelson::Connection;
 use strict;
 use warnings;
 
+use Class::Class;
+
 use base qw( Class::Class );
 
 use Nelson::IRC;
@@ -59,7 +61,7 @@ sub callback {
 sub connect {
 	my ($self) = @_;
 
-	$self->irc->connect(undef, undef, $self->bind || undef);
+	$self->irc->connect(undef, undef, $self->bind || undef) or die "Failed to connect socket. $!.\n";
 	$self->irc->loop;
 }
 
