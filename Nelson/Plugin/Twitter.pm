@@ -6,6 +6,7 @@ use warnings;
 use base qw( Nelson::Plugin );
 
 use Net::Twitter;
+use Encode;
 
 use Nelson::Schedule;
 use Nelson::Schedule::Job;
@@ -33,10 +34,12 @@ sub initialize {
 		return;
 	}
 
-	$self->{twitter} = new Net::Twitter(
-		consumer_key	=> $cfg{consumer_key},
-		consumer_secret	=> $cfg{consumer_secret},
-		traits		=> ['API::REST', 'OAuth'],
+	$self->{twitter} = Net::Twitter->new(
+		traits   => [qw/API::RESTv1_1/],
+		consumer_key        => $cfg{consumer_key},
+		consumer_secret     => $cfg{consumer_secret},
+		access_token        => $cfg{access_token},
+		access_token_secret => $cfg{access_token_secret},
 	);
 
 	$self->{twitter}->access_token($cfg{access_token});
@@ -115,7 +118,7 @@ sub tweet {
 
 		$text .= ' ' . $tag;
 
-		$self->{twitter}->update($text);
+		$self->{twitter}->update(decode('UTF-8', $text));
 		return $tag;
 	}
 	else {
