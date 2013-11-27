@@ -52,7 +52,7 @@ sub message {
 sub mechanize {
     my ($self) = @_;
 
-    $self->{_mechanize} ||= new WWW::Mechanize;
+    $self->{_mechanize} ||= new WWW::Mechanize(stack_depth => 0);
 
     return $self->{_mechanize};
 }
