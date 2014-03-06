@@ -4,14 +4,16 @@ package Nelson::Message;
 use strict;
 use warnings;
 
-use base qw( Class::Class );
+use base qw( Class::Accessor::Fast );
 
-our %MEMBERS = (
-	prefix     => '$',
-	command    => '$',
-	channel    => '$',
-	text       => '$',
-	connection => '$',
+__PACKAGE__->mk_accessors(
+	qw(
+		prefix
+		command
+		channel
+		text
+		connection
+	)
 );
 
 sub from {

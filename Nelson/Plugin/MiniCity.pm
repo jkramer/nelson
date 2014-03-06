@@ -12,7 +12,7 @@ use Text::Conjunct;
 sub namespace { 'minicity' }
 
 
-sub priority { 100 }
+sub priority { 1000 }
 
 
 sub initialize {

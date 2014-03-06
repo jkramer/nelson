@@ -12,21 +12,25 @@ use Nelson::Connection;
 use Nelson::Schema;
 use Nelson::Schedule;
 
-use base qw( Class::Class );
+use base qw( Class::Accessor::Fast );
 
-our %MEMBERS = (
-	connection => 'Nelson::Connection',
-	schema     => '$',
-	loaded     => '%',
+__PACKAGE__->mk_accessors(
+	qw(
+		connection
+		schema
+		loaded
+	)
 );
 
 
-sub initialize {
-	my ($self) = @_;
+sub new {
+	my ($class) = @_;
 
-	$self->connection(new Nelson::Connection);
+	my $self = bless {}, $class;
+
+	$self->connection(Nelson::Connection->new);
 	$self->schema('Nelson::Schema');
-	$self->loaded([]);
+	$self->loaded({});
 
 	return $self;
 }
@@ -104,7 +108,7 @@ sub setup {
 			} keys %cfg
 		);
 
-		$self->loaded($namespace => $instance);
+		$self->loaded->{$namespace} = $instance;
 	}
 }
 
@@ -213,7 +217,7 @@ sub _dispatch {
 		grep {
 			$_->can($method)
 		}
-		values %{ $self->loaded }
+		values %{$self->loaded}
 	];
 
 	for my $plugin (@$order) {

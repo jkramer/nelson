@@ -13,7 +13,7 @@ use JSON;
 sub namespace { 'reddit' }
 
 
-sub priority { 999 }
+sub priority { 1005 }
 
 
 sub message {
@@ -32,6 +32,8 @@ sub message {
 
 		$message->reply("Here's some cute shit for you: " . $item->{data}->{url});
 	}
+
+	return 1;
 }
 
 

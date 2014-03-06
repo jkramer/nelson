@@ -12,7 +12,7 @@ use LWP::UserAgent;
 sub namespace { 'lastfm' }
 
 
-sub priority { 100 }
+sub priority { 1000 }
 
 
 sub message {

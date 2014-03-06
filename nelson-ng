@@ -4,33 +4,41 @@ use strict;
 use warnings;
 
 use Config::Simple;
-use Getopt::LL::Simple qw( -f=s -h=s -p=d -s -n=s -c=s -P=s -b=s -S );
+use Getopt::Long::Descriptive;
 
 use Nelson;
+
+my ($opt, $usage) = describe_options(
+	"$0 %c %o",
+	[ 'config|f=s', 'Configuration file' ],
+	[ 'host|h=s', 'IRC host' ],
+	[ 'port|p=s', 'IRC port' ],
+	[ 'nick|n=s', 'IRC nick' ],
+	[ 'channel|c=s', 'IRC channel' ],
+	[ 'password|P=s', 'IRC password' ],
+	[ 'bind|b=s', 'Bind address' ],
+);
 
 # Find readable configuration file.
 my ($cfg_path) = grep {
 	defined($_) and -r $_
-} $ARGV{'-f'}, 'nelson.ini', $ENV{HOME} . '/.nelson.ini', '/etc/nelson.ini';
+} $opt->config, 'nelson.ini', $ENV{HOME} . '/.nelson.ini', '/etc/nelson.ini';
 
 die "No readable configuration found.\n" unless $cfg_path;
 
 my $cfg = new Config::Simple($cfg_path);
 
 # Override configuration with command line options.
-$cfg->param('irc.host'     => $ARGV{'-h'}) if($ARGV{'-h'});
-$cfg->param('irc.port'     => $ARGV{'-p'}) if($ARGV{'-p'});
-$cfg->param('irc.nick'     => $ARGV{'-n'}) if($ARGV{'-n'});
-$cfg->param('irc.channel'  => $ARGV{'-c'}) if($ARGV{'-c'});
-$cfg->param('irc.password' => $ARGV{'-P'}) if($ARGV{'-P'});
-$cfg->param('irc.bind' => $ARGV{'-b'}) if($ARGV{'-b'});
+$cfg->param('irc.host'     => $opt->host) if($opt->host);
+$cfg->param('irc.port'     => $opt->port) if($opt->port);
+$cfg->param('irc.nick'     => $opt->nick) if($opt->nick);
+$cfg->param('irc.channel'  => $opt->channel) if($opt->channel);
+$cfg->param('irc.password' => $opt->password) if($opt->password);
+$cfg->param('irc.bind' => $opt->bind) if($opt->bind);
 
 # Set defaults unless overridden.
 $cfg->param('irc.port' => 6667    ) unless $cfg->param('irc.port' ) ;
 $cfg->param('irc.nick' => 'nelson') unless $cfg->param('irc.nick' ) ;
-
-# Save settings to .ini if wanted.
-$cfg->save if($ARGV{'-S'});
 
 # Basic configuration checks.
 # Required settings.
@@ -44,7 +52,7 @@ while(my ($k, $v) = each %req) {
 }
 
 
-my $nelson = new Nelson;
+my $nelson = Nelson->new;
 
 # Run it.
 $nelson->setup($cfg->vars);

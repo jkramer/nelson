@@ -4,22 +4,22 @@ package Nelson::Connection;
 use strict;
 use warnings;
 
-use Class::Class;
-
-use base qw( Class::Class );
+use base qw( Class::Accessor::Fast );
 
 use Nelson::IRC;
 use Nelson::Message;
 
-our %MEMBERS = (
-	channel  => '$',
-	host     => '$',
-	port     => '$',
-	nick     => '$',
-	password => '$',
-	irc      => 'Nelson::IRC',
-	ssl      => '$',
-	bind     => '$',
+__PACKAGE__->mk_accessors(
+	qw(
+		channel
+		host
+		port
+		nick
+		password
+		irc
+		ssl
+		bind
+	)
 );
 
 

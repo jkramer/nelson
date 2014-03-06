@@ -10,7 +10,7 @@ our @ISA = qw( Nelson::Plugin );
 sub namespace { 'update' }
 
 
-sub priority { 1001 }
+sub priority { 101 }
 
 
 sub message {

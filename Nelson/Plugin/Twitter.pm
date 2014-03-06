@@ -15,7 +15,7 @@ use Nelson::Schedule::Job;
 sub namespace { 'twitter' }
 
 
-sub priority { 100 }
+sub priority { 1000 }
 
 
 sub initialize {
@@ -35,6 +35,7 @@ sub initialize {
 	}
 
 	$self->{twitter} = Net::Twitter->new(
+		ssl => 1,
 		traits   => [qw/API::RESTv1_1/],
 		consumer_key        => $cfg{consumer_key},
 		consumer_secret     => $cfg{consumer_secret},
